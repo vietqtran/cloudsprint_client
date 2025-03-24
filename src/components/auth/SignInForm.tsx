@@ -1,20 +1,18 @@
 'use client';
 
-import type React from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { emailValidation,passwordValidation } from '@/constants/validate';
+import { emailValidation, passwordValidation } from '@/constants/validate';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { Form,FormControl,FormField,FormItem,FormLabel,FormMessage } from '../ui/form';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import GoogleSocialButton from '../common/social/GoogleSocialButton';
 import FacebookSocialButton from '../common/social/FacebookSocialButton';
+import GoogleSocialButton from '../common/social/GoogleSocialButton';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 
 const signInSchema = z.object({
   email: emailValidation,
@@ -25,12 +23,12 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
   const router = useRouter();
-  const [ errors,setErrors ] = useState<{
+  const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
     general?: string;
   }>({});
-  const [ isLoading,setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -45,7 +43,7 @@ export function SignInForm() {
     setErrors({});
 
     const formValues = {
-      ...values
+      ...values,
     };
 
     const validationResult = signInSchema.safeParse(formValues);
@@ -57,8 +55,8 @@ export function SignInForm() {
       };
 
       validationResult.error.errors.forEach((error) => {
-        const path = error.path[ 0 ] as keyof SignInFormValues;
-        formattedErrors[ path ] = error.message;
+        const path = error.path[0] as keyof SignInFormValues;
+        formattedErrors[path] = error.message;
       });
 
       setErrors(formattedErrors);
@@ -66,7 +64,7 @@ export function SignInForm() {
       return;
     }
 
-    const result = { success: true,errors: {},message: '' };
+    const result = { success: true, errors: {}, message: '' };
 
     if (result.success) {
       toast('Signed in successfully!');
@@ -83,12 +81,11 @@ export function SignInForm() {
 
   return (
     <Form {...form}>
-
       <form className='mt-8 space-y-6' onSubmit={form.handleSubmit(handleSubmit)}>
         <div className='space-y-2'>
           <FormField
             control={form.control}
-            name="email"
+            name='email'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
@@ -113,11 +110,9 @@ export function SignInForm() {
         </div>
 
         <div className='space-y-2'>
-
-
           <FormField
             control={form.control}
-            name="password"
+            name='password'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
@@ -170,6 +165,5 @@ export function SignInForm() {
         </div>
       </form>
     </Form>
-
   );
 }

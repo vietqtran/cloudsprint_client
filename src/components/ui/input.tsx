@@ -1,15 +1,19 @@
-import { Eye,EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { boolean } from 'zod';
 
 interface InputProps {
-  isError?: boolean
-};
+  isError?: boolean;
+}
 
-function Input({ isError = false,className,type,...props }: React.ComponentProps<'input'> & InputProps) {
-  const [ showPassword,setShowPassword ] = React.useState(false);
+function Input({
+  isError = false,
+  className,
+  type,
+  ...props
+}: React.ComponentProps<'input'> & InputProps) {
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const inputType = type === 'password' && showPassword ? 'text' : type;
 

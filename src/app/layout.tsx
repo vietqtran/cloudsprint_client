@@ -4,8 +4,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import { TanstackQueryProviders } from '@/providers';
 import ParallelRouting from '@/providers/ParallelRouting';
-import React,{ Suspense } from 'react';
-import { ThemeProvider } from 'next-themes';
+import React, { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: {
