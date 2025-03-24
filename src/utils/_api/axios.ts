@@ -13,7 +13,7 @@ const instance = axios.create({
 axios.defaults.withCredentials = true;
 
 export const refreshAccessTokenFn = async () => {
-  const response = await instance.post('/auth/refresh');
+  const response = await instance.post('/refresh');
   return response.data;
 };
 
@@ -51,28 +51,28 @@ instance.interceptors.response.use(
       error.response &&
       error.response.status === 401 &&
       !isRetried &&
-      window.location.pathname !== '/auth/sign-in' &&
-      window.location.pathname !== '/auth/sign-up'
+      window.location.pathname !== '/sign-in' &&
+      window.location.pathname !== '/sign-up'
     ) {
       isRetried = true;
       try {
-        const refreshSuccess = await instance.post('/auth/refresh', {}, { withCredentials: true });
+        const refreshSuccess = await instance.post('/refresh', {}, { withCredentials: true });
         if (refreshSuccess.data.status && refreshSuccess.data.statusCode === 200) {
           isRetried = false;
         } else if (
-          window.location.pathname !== '/auth/sign-in' &&
-          window.location.pathname !== '/auth/sign-up'
+          window.location.pathname !== '/sign-in' &&
+          window.location.pathname !== '/sign-up'
         ) {
-          window.location.href = '/auth/sign-in';
+          window.location.href = '/sign-in';
           return;
         }
         return instance(originalConfig);
       } catch (refreshError: unknown) {
         if (
-          window.location.pathname !== '/auth/sign-in' &&
-          window.location.pathname !== '/auth/sign-up'
+          window.location.pathname !== '/sign-in' &&
+          window.location.pathname !== '/sign-up'
         ) {
-          window.location.href = '/auth/sign-in';
+          window.location.href = '/sign-in';
           return;
         }
         return Promise.reject(error ?? refreshError);

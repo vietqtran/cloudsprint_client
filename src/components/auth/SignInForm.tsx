@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { emailValidation, passwordValidation } from '@/constants/validate';
+import { emailValidation,passwordValidation } from '@/constants/validate';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import FacebookSocialButton from '../common/social/FacebookSocialButton';
 import GoogleSocialButton from '../common/social/GoogleSocialButton';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Form,FormControl,FormField,FormItem,FormLabel,FormMessage } from '../ui/form';
 
 const signInSchema = z.object({
   email: emailValidation,
@@ -23,12 +23,12 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
   const router = useRouter();
-  const [errors, setErrors] = useState<{
+  const [ errors,setErrors ] = useState<{
     email?: string;
     password?: string;
     general?: string;
   }>({});
-  const [isLoading, setIsLoading] = useState(false);
+  const [ isLoading,setIsLoading ] = useState(false);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -55,8 +55,8 @@ export function SignInForm() {
       };
 
       validationResult.error.errors.forEach((error) => {
-        const path = error.path[0] as keyof SignInFormValues;
-        formattedErrors[path] = error.message;
+        const path = error.path[ 0 ] as keyof SignInFormValues;
+        formattedErrors[ path ] = error.message;
       });
 
       setErrors(formattedErrors);
@@ -64,11 +64,11 @@ export function SignInForm() {
       return;
     }
 
-    const result = { success: true, errors: {}, message: '' };
+    const result = { success: true,errors: {},message: '' };
 
     if (result.success) {
       toast('Signed in successfully!');
-      router.push('/dashboard');
+      router.push('/');
     } else {
       setErrors(result.errors || {});
       if (result.message) {

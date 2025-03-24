@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter,useSearchParams } from 'next/navigation';
 
 export default function OtpSuccessPage() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function OtpSuccessPage() {
         <button
           type='button'
           className='text-sm cursor-pointer text-[#1e4ae9] hover:underline'
-          onClick={() => router.push('/auth/sign-in')}
+          onClick={() => router.push('/sign-in')}
         >
           Back to Sign in
         </button>
