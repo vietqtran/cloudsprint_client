@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
-import { useRouter,useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function OtpSuccessPage() {
   const router = useRouter();

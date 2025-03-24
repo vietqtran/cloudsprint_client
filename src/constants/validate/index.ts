@@ -7,6 +7,8 @@ export const passwordValidation = z
     message: 'Password must contain at least one number and one special character',
   });
 
+export const passwordSignInValidation = z.string();
+
 export const confirmPasswordValidation = z.string();
 
 export const emailValidation = z.string().email({ message: 'Please enter a valid email address' });

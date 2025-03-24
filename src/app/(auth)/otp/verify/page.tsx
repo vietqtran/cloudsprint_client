@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { otpValidation } from '@/constants/validate';
-import { useRouter,useSearchParams } from 'next/navigation';
-import { useEffect,useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -22,13 +22,13 @@ export default function OtpVerificationForm() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
 
-  const [ errors,setErrors ] = useState<{
+  const [errors, setErrors] = useState<{
     otp?: string;
     general?: string;
   }>({});
-  const [ isLoading,setIsLoading ] = useState(false);
-  const [ timeLeft,setTimeLeft ] = useState(60);
-  const [ resendDisabled,setResendDisabled ] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [resendDisabled, setResendDisabled] = useState(true);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -38,10 +38,10 @@ export default function OtpVerificationForm() {
 
     const timer = setTimeout(() => {
       setTimeLeft(timeLeft - 1);
-    },1000);
+    }, 1000);
 
     return () => clearTimeout(timer);
-  },[ timeLeft ]);
+  }, [timeLeft]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,8 +59,8 @@ export default function OtpVerificationForm() {
       };
 
       validationResult.error.errors.forEach((error) => {
-        const path = error.path[ 0 ] as keyof OtpVerificationFormValues;
-        formattedErrors[ path ] = error.message;
+        const path = error.path[0] as keyof OtpVerificationFormValues;
+        formattedErrors[path] = error.message;
       });
 
       setErrors(formattedErrors);
@@ -74,7 +74,7 @@ export default function OtpVerificationForm() {
 
         router.push(`/reset?email=${encodeURIComponent(email)}&token=${otp}`);
         setIsLoading(false);
-      },1000);
+      }, 1000);
     } catch (error) {
       console.error(error);
       setErrors({
@@ -90,7 +90,7 @@ export default function OtpVerificationForm() {
 
     setTimeout(() => {
       toast('Verification code resent!');
-    },1000);
+    }, 1000);
   }
 
   return (
@@ -115,8 +115,9 @@ export default function OtpVerificationForm() {
             type='text'
             maxLength={6}
             placeholder='Enter 6-digit code'
-            className={`w-full rounded-md border text-center tracking-widest ${errors.otp ? 'border-red-500' : 'border-[#d4d7e3]'
-              } bg-[#f7fbff] px-3 py-2 text-[#313957] text-lg`}
+            className={`w-full rounded-md border text-center tracking-widest ${
+              errors.otp ? 'border-red-500' : 'border-[#d4d7e3]'
+            } bg-[#f7fbff] px-3 py-2 text-[#313957] text-lg`}
           />
           {errors.otp && <p className='mt-1 text-xs text-red-500'>{errors.otp}</p>}
         </div>
@@ -140,8 +141,9 @@ export default function OtpVerificationForm() {
           <button
             type='button'
             disabled={resendDisabled}
-            className={`text-sm cursor-pointer ${resendDisabled ? 'text-[#8897ad]' : 'text-[#1e4ae9] hover:underline'
-              }`}
+            className={`text-sm cursor-pointer ${
+              resendDisabled ? 'text-[#8897ad]' : 'text-[#1e4ae9] hover:underline'
+            }`}
             onClick={handleResendOTP}
           >
             {resendDisabled ? `Resend code in ${timeLeft}s` : 'Resend code'}

@@ -3,8 +3,7 @@ import './globals.css';
 
 import { Toaster } from '@/components/ui/sonner';
 import { TanstackQueryProviders } from '@/providers';
-import ParallelRouting from '@/providers/ParallelRouting';
-import React,{ Suspense } from 'react';
+import React, { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {

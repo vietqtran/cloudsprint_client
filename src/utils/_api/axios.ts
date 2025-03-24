@@ -68,10 +68,7 @@ instance.interceptors.response.use(
         }
         return instance(originalConfig);
       } catch (refreshError: unknown) {
-        if (
-          window.location.pathname !== '/sign-in' &&
-          window.location.pathname !== '/sign-up'
-        ) {
+        if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
           window.location.href = '/sign-in';
           return;
         }

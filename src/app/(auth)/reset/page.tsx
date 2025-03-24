@@ -5,7 +5,7 @@ import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { confirmPasswordValidation,passwordValidation } from '@/constants/validate';
+import { confirmPasswordValidation, passwordValidation } from '@/constants/validate';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -16,9 +16,9 @@ const resetPasswordSchema = z
     password: passwordValidation,
     confirmPassword: confirmPasswordValidation,
   })
-  .refine((data) => data.password === data.confirmPassword,{
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: [ 'confirmPassword' ],
+    path: ['confirmPassword'],
   });
 
 type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
@@ -29,12 +29,12 @@ export default function ResetPasswordForm() {
   //   const email = searchParams.get("email") || "";
   //   const token = searchParams.get("token") || "";
 
-  const [ errors,setErrors ] = useState<{
+  const [errors, setErrors] = useState<{
     password?: string;
     confirmPassword?: string;
     general?: string;
   }>({});
-  const [ isLoading,setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,8 +56,8 @@ export default function ResetPasswordForm() {
       };
 
       validationResult.error.errors.forEach((error) => {
-        const path = error.path[ 0 ] as keyof ResetPasswordFormValues;
-        formattedErrors[ path ] = error.message;
+        const path = error.path[0] as keyof ResetPasswordFormValues;
+        formattedErrors[path] = error.message;
       });
 
       setErrors(formattedErrors);
@@ -71,7 +71,7 @@ export default function ResetPasswordForm() {
 
         router.push('/sign-in');
         setIsLoading(false);
-      },1000);
+      }, 1000);
     } catch (error) {
       console.error(error);
       setErrors({
@@ -100,8 +100,9 @@ export default function ResetPasswordForm() {
               name='password'
               type='password'
               placeholder='Enter new password'
-              className={`w-full rounded-md border ${errors.password ? 'border-red-500' : 'border-[#d4d7e3]'
-                } bg-[#f7fbff] px-3 py-2 text-[#313957] pr-10`}
+              className={`w-full rounded-md border ${
+                errors.password ? 'border-red-500' : 'border-[#d4d7e3]'
+              } bg-[#f7fbff] px-3 py-2 text-[#313957] pr-10`}
             />
           </div>
           {errors.password && <p className='mt-1 text-xs text-red-500'>{errors.password}</p>}
@@ -120,8 +121,9 @@ export default function ResetPasswordForm() {
               name='confirmPassword'
               type='password'
               placeholder='Confirm new password'
-              className={`w-full rounded-md border ${errors.confirmPassword ? 'border-red-500' : 'border-[#d4d7e3]'
-                } bg-[#f7fbff] px-3 py-2 text-[#313957] pr-10`}
+              className={`w-full rounded-md border ${
+                errors.confirmPassword ? 'border-red-500' : 'border-[#d4d7e3]'
+              } bg-[#f7fbff] px-3 py-2 text-[#313957] pr-10`}
             />
           </div>
           {errors.confirmPassword && (

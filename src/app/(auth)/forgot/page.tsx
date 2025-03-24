@@ -19,11 +19,11 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
-  const [ errors,setErrors ] = useState<{
+  const [errors, setErrors] = useState<{
     email?: string;
     general?: string;
   }>({});
-  const [ isLoading,setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,8 +41,8 @@ export default function ForgotPasswordForm() {
       };
 
       validationResult.error.errors.forEach((error) => {
-        const path = error.path[ 0 ] as keyof ForgotPasswordFormValues;
-        formattedErrors[ path ] = error.message;
+        const path = error.path[0] as keyof ForgotPasswordFormValues;
+        formattedErrors[path] = error.message;
       });
 
       setErrors(formattedErrors);
@@ -56,7 +56,7 @@ export default function ForgotPasswordForm() {
 
         router.push(`/otp/verify?email=${encodeURIComponent(email)}`);
         setIsLoading(false);
-      },1000);
+      }, 1000);
     } catch (error) {
       console.error(error);
       setErrors({
@@ -87,8 +87,9 @@ export default function ForgotPasswordForm() {
             name='email'
             type='email'
             placeholder='example@email.com'
-            className={`w-full rounded-md border ${errors.email ? 'border-red-500' : 'border-[#d4d7e3]'
-              } bg-[#f7fbff] px-3 py-2 text-[#313957]`}
+            className={`w-full rounded-md border ${
+              errors.email ? 'border-red-500' : 'border-[#d4d7e3]'
+            } bg-[#f7fbff] px-3 py-2 text-[#313957]`}
             required
           />
           {errors.email && <p className='mt-1 text-xs text-red-500'>{errors.email}</p>}
