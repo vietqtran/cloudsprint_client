@@ -1,5 +1,6 @@
-import { Eye, EyeOff } from 'lucide-react';
 import * as React from 'react';
+
+import { Eye, EyeOff } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -41,9 +42,8 @@ function Input({
       {type === 'password' && (
         <button
           type='button'
-          className='cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none'
+          className='cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:ring-offset-2 rounded-[2px] disabled:cursor-not-allowed disabled:opacity-50'
           onClick={togglePasswordVisibility}
-          tabIndex={-1}
           aria-label={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}

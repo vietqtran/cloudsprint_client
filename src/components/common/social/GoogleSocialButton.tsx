@@ -1,10 +1,11 @@
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 const GoogleSocialButton = () => {
   return (
-    <button
+    <Button
       type='button'
-      className='flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-[#d4d7e3] px-4 py-2 text-sm font-medium hover:bg-[#f3f9fa]'
+      className='flex w-full cursor-pointer items-center justify-center gap-3 rounded-md px-4 py-2 text-sm font-medium'
       onClick={() => {
         toast('Google sign-up would be triggered here.');
       }}
@@ -28,7 +29,7 @@ const GoogleSocialButton = () => {
         />
       </svg>
       Sign up with Google
-    </button>
+    </Button>
   );
 };
 

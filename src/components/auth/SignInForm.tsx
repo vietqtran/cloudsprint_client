@@ -1,18 +1,20 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { emailValidation, passwordSignInValidation } from '@/constants/validate';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+
+import { Button } from '@/components/ui/button';
 import FacebookSocialButton from '../common/social/FacebookSocialButton';
 import GoogleSocialButton from '../common/social/GoogleSocialButton';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import LoadingSpinner from '../ui/loading-spinner';
+import { toast } from 'sonner';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const signInSchema = z.object({
   email: emailValidation,
@@ -39,6 +41,7 @@ export function SignInForm() {
   });
 
   async function handleSubmit(values: z.infer<typeof signInSchema>) {
+    if (isLoading) return;
     setIsLoading(true);
     setErrors({});
 
@@ -97,6 +100,7 @@ export function SignInForm() {
                   <Input
                     id='email'
                     type='text'
+                    autoFocus
                     placeholder='example@email.com'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.email}
@@ -142,12 +146,11 @@ export function SignInForm() {
           </div>
         )}
 
-        <Button
+<Button
           type='submit'
-          disabled={isLoading}
-          className='w-full cursor-pointer rounded-md bg-[#162d3a] py-2.5 text-white hover:bg-[#122b31] focus:outline-none focus:ring-2 focus:ring-[#294957] focus:ring-offset-2'
+          className='w-full cursor-pointer rounded-md py-2.5 text-white'
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? <LoadingSpinner /> : 'Sign up'}
         </Button>
 
         <div className='relative'>

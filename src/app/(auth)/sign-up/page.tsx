@@ -1,6 +1,6 @@
-import { SignUpForm } from '@/components/auth/SignUpForm';
 import Image from 'next/image';
 import Link from 'next/link';
+import { SignUpForm } from '@/components/auth/SignUpForm';
 
 export default function SignUpPage() {
   return (
@@ -30,7 +30,7 @@ export default function SignUpPage() {
       </div>
 
       <div className='hidden lg:block lg:w-1/2 relative'>
-        <div className='relative h-screen w-full bg-[#f7fbff] sticky top-0 left-0 right-0'>
+        <div className='h-screen w-full bg-[#f7fbff] sticky top-0 left-0 right-0'>
           <Image
             src='/image.png'
             alt='Decorative background'
