@@ -8,8 +8,8 @@ export default function RootLayout({
 }>) {
   return (
     <div className='flex min-h-screen'>
-      <div className='w-full min-h-screen grid place-items-center'>{children}</div>
-      <div className='hidden lg:block lg:w-1/2 relative'>
+      <div className='flex-1 min-h-screen grid place-items-center'>{children}</div>
+      <div className='hidden flex-shrink-0 lg:block lg:w-1/2 relative'>
         <div className='h-screen w-full bg-[#f7fbff] sticky top-0 left-0 right-0'>
           <Image
             src='/image.png'

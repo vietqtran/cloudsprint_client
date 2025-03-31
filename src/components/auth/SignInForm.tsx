@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -26,6 +27,8 @@ type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
   const router = useRouter();
+  const { signIn } = useAuth();
+
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -45,42 +48,45 @@ export function SignInForm() {
     if (isLoading) return;
     setIsLoading(true);
     setErrors({});
+    try {
+      const validationResult = signInSchema.safeParse(values);
 
-    const formValues = {
-      ...values,
-    };
+      if (!validationResult.success) {
+        const formattedErrors = {
+          email: '',
+          password: '',
+        };
 
-    const validationResult = signInSchema.safeParse(formValues);
+        validationResult.error.errors.forEach((error) => {
+          const path = error.path[0] as keyof SignInFormValues;
+          formattedErrors[path] = error.message;
+        });
 
-    if (!validationResult.success) {
-      const formattedErrors = {
-        email: '',
-        password: '',
-      };
+        setErrors(formattedErrors);
+        setIsLoading(false);
+        return;
+      }
 
-      validationResult.error.errors.forEach((error) => {
-        const path = error.path[0] as keyof SignInFormValues;
-        formattedErrors[path] = error.message;
+      const data = await signIn.mutateAsync({
+        email: values.email,
+        password: values.password,
       });
 
-      setErrors(formattedErrors);
-      setIsLoading(false);
-      return;
-    }
-
-    const result = { success: true, errors: {}, message: '' };
-
-    if (result.success) {
-      toast('Signed in successfully!');
-      router.push('/');
-    } else {
-      setErrors(result.errors || {});
-      if (result.message) {
-        toast('An error occurred. Please try again.');
+      if (data.status === 'success') {
+        toast('Signed in successfully!');
+        setIsLoading(false);
+        setTimeout(() => {
+          router.push('/');
+        }, 1000);
+      } else {
+        setErrors({ general: data.message });
       }
+    } catch (error) {
+      console.log(error);
+      setErrors({ general: 'Something went wrong' });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   }
 
   return (

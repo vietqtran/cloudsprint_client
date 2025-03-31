@@ -7,7 +7,7 @@ interface Props {
 
 const CustomLink = ({ href, text }: Props) => {
   return (
-    <Link href={href} className='font-medium text-[#1e4ae9] hover:underline'>
+    <Link href={href} className='font-medium text-sm text-[#1e4ae9] hover:underline'>
       {text}
     </Link>
   );
