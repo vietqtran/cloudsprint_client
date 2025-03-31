@@ -13,8 +13,12 @@ export const confirmPasswordValidation = z.string();
 
 export const emailValidation = z.string().email({ message: 'Please enter a valid email address' });
 
-export const firstNameValidation = z.string().min(2, { message: 'First name must be at least 2 characters' });
-export const lastNameValidation = z.string().min(2, { message: 'Last name must be at least 2 characters' });
+export const firstNameValidation = z
+  .string()
+  .min(2, { message: 'First name must be at least 2 characters' });
+export const lastNameValidation = z
+  .string()
+  .min(2, { message: 'Last name must be at least 2 characters' });
 
 export const otpValidation = z
   .string()

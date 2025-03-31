@@ -5,6 +5,7 @@ import type React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import CustomLink from '@/components/ui/link';
 import { emailValidation } from '@/constants/validate';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -110,13 +111,7 @@ export default function ForgotPasswordForm() {
         </Button>
 
         <div className='text-center'>
-          <button
-            type='button'
-            className='text-sm text-[#1e4ae9] hover:underline'
-            onClick={() => router.push('/sign-in')}
-          >
-            Back to Sign in
-          </button>
+          <CustomLink href='/sign-in' text='Sign in' />
         </div>
       </form>
     </div>

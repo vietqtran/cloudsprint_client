@@ -1,11 +1,11 @@
 import './globals.css';
-import 'ldrs/react/Ring.css'
+import 'ldrs/react/Ring.css';
 
 import React, { Suspense } from 'react';
 
-import type { Metadata } from 'next';
-import { TanstackQueryProviders } from '@/providers';
 import { Toaster } from '@/components/ui/sonner';
+import { TanstackQueryProviders } from '@/providers';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {

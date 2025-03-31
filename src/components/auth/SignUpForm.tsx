@@ -1,5 +1,12 @@
-"use client";
+'use client';
 
+import {
+  confirmPasswordValidation,
+  emailValidation,
+  firstNameValidation,
+  lastNameValidation,
+  passwordValidation,
+} from '@/constants/validate';
 import {
   Form,
   FormControl,
@@ -8,27 +15,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import {
-  confirmPasswordValidation,
-  emailValidation,
-  firstNameValidation,
-  lastNameValidation,
-  passwordValidation,
-} from "@/constants/validate";
+} from '../ui/form';
 
-import { Button } from "@/components/ui/button";
-import FacebookSocialButton from "../common/social/FacebookSocialButton";
-import GoogleSocialButton from "../common/social/GoogleSocialButton";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import LoadingSpinner from "../ui/loading-spinner";
-import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import FacebookSocialButton from '../common/social/FacebookSocialButton';
+import GoogleSocialButton from '../common/social/GoogleSocialButton';
+import LoadingSpinner from '../ui/loading-spinner';
 
 const signUpSchema = z
   .object({
@@ -39,8 +39,8 @@ const signUpSchema = z
     confirmPassword: confirmPasswordValidation,
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
   });
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -59,11 +59,11 @@ export function SignUpForm() {
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
@@ -80,11 +80,11 @@ export function SignUpForm() {
 
     if (!validationResult.success) {
       const formattedErrors = {
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
       };
 
       validationResult.error.errors.forEach((error) => {
@@ -98,7 +98,7 @@ export function SignUpForm() {
     }
     const result = await fetch('/api/auth/sign-up', {
       method: 'POST',
-      body: JSON.stringify(values)
+      body: JSON.stringify(values),
     });
 
     const json = await result.json();
@@ -107,7 +107,7 @@ export function SignUpForm() {
       setIsLoading(false);
       if (result.ok) {
         toast.success(json.message);
-        router.push("/sign-in");
+        router.push('/sign-in');
       } else {
         setErrors({ general: json.message });
       }
@@ -116,30 +116,24 @@ export function SignUpForm() {
 
   return (
     <Form {...form}>
-      <form
-        className="mt-8 space-y-6"
-        onSubmit={form.handleSubmit(handleSubmit)}
-      >
-        <div className="flex items-start gap-2">
+      <form className='mt-8 space-y-6' onSubmit={form.handleSubmit(handleSubmit)}>
+        <div className='flex items-start gap-2'>
           <FormField
             control={form.control}
-            name="firstName"
+            name='firstName'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  <Label
-                    htmlFor="firstName"
-                    className="block text-sm font-medium"
-                  >
+                  <Label htmlFor='firstName' className='block text-sm font-medium'>
                     First name
                   </Label>
                 </FormLabel>
                 <FormControl>
                   <Input
-                    id="firstName"
+                    id='firstName'
                     autoFocus
-                    type="text"
-                    placeholder="John"
+                    type='text'
+                    placeholder='John'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.firstName}
                     {...field}
@@ -151,22 +145,19 @@ export function SignUpForm() {
           />
           <FormField
             control={form.control}
-            name="lastName"
+            name='lastName'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  <Label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium"
-                  >
+                  <Label htmlFor='lastName' className='block text-sm font-medium'>
                     Last name
                   </Label>
                 </FormLabel>
                 <FormControl>
                   <Input
-                    id="lastName"
-                    type="text"
-                    placeholder="Doe"
+                    id='lastName'
+                    type='text'
+                    placeholder='Doe'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.lastName}
                     {...field}
@@ -178,22 +169,22 @@ export function SignUpForm() {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className='space-y-2'>
           <FormField
             control={form.control}
-            name="email"
+            name='email'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  <Label htmlFor="email" className="block text-sm font-medium">
+                  <Label htmlFor='email' className='block text-sm font-medium'>
                     Email
                   </Label>
                 </FormLabel>
                 <FormControl>
                   <Input
-                    id="email"
-                    type="text"
-                    placeholder="example@email.com"
+                    id='email'
+                    type='text'
+                    placeholder='example@email.com'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.email}
                     {...field}
@@ -205,33 +196,29 @@ export function SignUpForm() {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className='space-y-2'>
           <FormField
             control={form.control}
-            name="password"
+            name='password'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  <Label
-                    htmlFor="password"
-                    className="block text-sm font-medium"
-                  >
+                  <Label htmlFor='password' className='block text-sm font-medium'>
                     Password
                   </Label>
                 </FormLabel>
                 <FormControl>
                   <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
+                    id='password'
+                    type='password'
+                    placeholder='••••••••'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.password}
                     {...field}
                   />
                 </FormControl>
                 <FormDescription>
-                  Password must be at least 8 characters with one uppercase
-                  letter and one number.
+                  Password must be at least 8 characters with one uppercase letter and one number.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -239,25 +226,22 @@ export function SignUpForm() {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className='space-y-2'>
           <FormField
             control={form.control}
-            name="confirmPassword"
+            name='confirmPassword'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  <Label
-                    htmlFor="confirmPassword"
-                    className="block text-sm font-medium"
-                  >
+                  <Label htmlFor='confirmPassword' className='block text-sm font-medium'>
                     Confirm Password
                   </Label>
                 </FormLabel>
                 <FormControl>
                   <Input
-                    id="confirmPassword"
-                    type="confirmPassword"
-                    placeholder="••••••••"
+                    id='confirmPassword'
+                    type='confirmPassword'
+                    placeholder='••••••••'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.confirmPassword}
                     {...field}
@@ -270,28 +254,25 @@ export function SignUpForm() {
         </div>
 
         {errors.general && (
-          <div className="rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-500">{errors.general}</p>
+          <div className='rounded-md bg-red-50 p-3'>
+            <p className='text-sm text-red-500'>{errors.general}</p>
           </div>
         )}
 
-        <Button
-          type="submit"
-          className="w-full cursor-pointer rounded-md py-2.5 text-white"
-        >
-          {isLoading ? <LoadingSpinner /> : "Sign up"}
+        <Button type='submit' className='w-full cursor-pointer rounded-md py-2.5 text-white'>
+          {isLoading ? <LoadingSpinner /> : 'Sign up'}
         </Button>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#d4d7e3]"></div>
+        <div className='relative'>
+          <div className='absolute inset-0 flex items-center'>
+            <div className='w-full border-t border-[#d4d7e3]'></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-4 text-[#8897ad]">Or</span>
+          <div className='relative flex justify-center text-sm'>
+            <span className='bg-white px-4 text-[#8897ad]'>Or</span>
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className='space-y-3'>
           <GoogleSocialButton />
           <FacebookSocialButton />
         </div>

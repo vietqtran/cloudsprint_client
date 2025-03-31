@@ -1,20 +1,21 @@
 'use client';
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { emailValidation, passwordSignInValidation } from '@/constants/validate';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 
 import { Button } from '@/components/ui/button';
-import FacebookSocialButton from '../common/social/FacebookSocialButton';
-import GoogleSocialButton from '../common/social/GoogleSocialButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import LoadingSpinner from '../ui/loading-spinner';
-import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import FacebookSocialButton from '../common/social/FacebookSocialButton';
+import GoogleSocialButton from '../common/social/GoogleSocialButton';
+import CustomLink from '../ui/link';
+import LoadingSpinner from '../ui/loading-spinner';
 
 const signInSchema = z.object({
   email: emailValidation,
@@ -138,6 +139,9 @@ export function SignInForm() {
               </FormItem>
             )}
           />
+          <div className='flex justify-end mt-2'>
+            <CustomLink href='/forgot' text='Forgot password?' />
+          </div>
         </div>
 
         {errors.general && (
@@ -146,10 +150,7 @@ export function SignInForm() {
           </div>
         )}
 
-<Button
-          type='submit'
-          className='w-full cursor-pointer rounded-md py-2.5 text-white'
-        >
+        <Button type='submit' className='w-full cursor-pointer rounded-md py-2.5 text-white'>
           {isLoading ? <LoadingSpinner /> : 'Sign up'}
         </Button>
 

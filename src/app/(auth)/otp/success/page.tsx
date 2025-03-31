@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import CustomLink from '@/components/ui/link';
 import { CheckCircle } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -36,13 +37,7 @@ export default function OtpSuccessPage() {
           Continue
         </Button>
 
-        <button
-          type='button'
-          className='text-sm cursor-pointer text-[#1e4ae9] hover:underline'
-          onClick={() => router.push('/sign-in')}
-        >
-          Back to Sign in
-        </button>
+        <CustomLink href='/sign-in' text='Sign in' />
       </div>
 
       <div className='rounded-md bg-blue-50 p-4'>
