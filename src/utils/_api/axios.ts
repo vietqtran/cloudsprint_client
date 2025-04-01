@@ -1,81 +1,101 @@
-import axios from 'axios';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-let isRetried = false;
+import axios from 'axios';
 
 const instance = axios.create({
   timeout: 300000,
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
-axios.defaults.withCredentials = true;
+let isRefreshing = false;
+let failedQueue: { resolve: (value: unknown) => void; reject: (reason?: any) => void }[] = [];
 
-export const refreshAccessTokenFn = async () => {
-  const response = await instance.post('/refresh');
-  return response.data;
+const processQueue = (error: any, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
 };
-
-export interface SuccessResponse {
-  success: true;
-  data: object | null;
-  message: string;
-  timestamp: Date;
-  path: string;
-  statusCode: number;
-  error: null;
-}
-
-export interface ErrorResponse {
-  success: false;
-  data: null;
-  message: string;
-  timestamp: Date;
-  path: string;
-  statusCode: number;
-  error: {
-    message: string;
-    stack: string;
-  };
-}
 
 instance.interceptors.response.use(
   (response) => {
-    response.data = response.data as SuccessResponse;
     return response;
   },
   async (error) => {
-    const originalConfig = error.config;
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !isRetried &&
-      window.location.pathname !== '/sign-in' &&
-      window.location.pathname !== '/sign-up'
-    ) {
-      isRetried = true;
-      try {
-        const refreshSuccess = await instance.post('/refresh', {}, { withCredentials: true });
-        if (refreshSuccess.data.status && refreshSuccess.data.statusCode === 200) {
-          isRetried = false;
-        } else if (
-          window.location.pathname !== '/sign-in' &&
-          window.location.pathname !== '/sign-up'
-        ) {
-          window.location.href = '/sign-in';
-          return;
-        }
-        return instance(originalConfig);
-      } catch (refreshError: unknown) {
+    const originalRequest = error.config;
+
+    if (!error.response || error.response.status !== 401) {
+      return Promise.reject(error);
+    }
+
+    if (window.location.pathname === '/sign-in' || window.location.pathname === '/sign-up') {
+      return Promise.reject(error);
+    }
+
+    if (originalRequest._retry) {
+      window.location.href = '/sign-in';
+      return Promise.reject(error);
+    }
+
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      })
+        .then(() => {
+          return instance(originalRequest);
+        })
+        .catch((err) => {
+          return Promise.reject(err);
+        });
+    }
+
+    originalRequest._retry = true;
+    isRefreshing = true;
+
+    try {
+      const { data } = await instance.post('/auth/refresh', {}, { withCredentials: true });
+
+      if (data.status === 'success') {
+        processQueue(null);
+        isRefreshing = false;
+        return instance(originalRequest);
+      } else {
+        processQueue(new Error('Refresh token failed'));
+        isRefreshing = false;
+
         if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
           window.location.href = '/sign-in';
-          return;
         }
-        return Promise.reject(error ?? refreshError);
+        return Promise.reject(error);
       }
+    } catch (refreshError) {
+      processQueue(refreshError);
+      isRefreshing = false;
+
+      if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
+        window.location.href = '/sign-in';
+      }
+      return Promise.reject(refreshError);
     }
-    isRetried = false;
+  }
+);
+
+instance.interceptors.request.use(
+  (config) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Request] ${config.method?.toUpperCase()} ${config.url}`);
+    }
+    return config;
+  },
+  (error) => {
     return Promise.reject(error);
   }
 );

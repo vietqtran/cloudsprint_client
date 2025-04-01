@@ -20,7 +20,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -43,10 +45,9 @@ const signUpSchema = z
     path: ['confirmPassword'],
   });
 
-type SignUpFormValues = z.infer<typeof signUpSchema>;
-
 export function SignUpForm() {
   const router = useRouter();
+  const { signUp } = useAuth();
   const [errors, setErrors] = useState<{
     name?: string;
     email?: string;
@@ -71,47 +72,28 @@ export function SignUpForm() {
     if (isLoading) return;
     setIsLoading(true);
     setErrors({});
-
-    const formValues = {
-      ...values,
-    };
-
-    const validationResult = signUpSchema.safeParse(formValues);
-
-    if (!validationResult.success) {
-      const formattedErrors = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      };
-
-      validationResult.error.errors.forEach((error) => {
-        const path = error.path[0] as keyof SignUpFormValues;
-        formattedErrors[path] = error.message;
+    try {
+      const data = await signUp.mutateAsync({
+        email: values.email,
+        password: values.password,
+        firstName: values.firstName,
+        lastName: values.lastName,
       });
 
-      setErrors(formattedErrors);
-      setIsLoading(false);
-      return;
-    }
-    const result = await fetch('/api/auth/sign-up', {
-      method: 'POST',
-      body: JSON.stringify(values),
-    });
-
-    const json = await result.json();
-
-    setTimeout(() => {
-      setIsLoading(false);
-      if (result.ok) {
-        toast.success(json.message);
+      if (data.status === 'success') {
+        toast.success(data.message);
         router.push('/sign-in');
       } else {
-        setErrors({ general: json.message });
+        setErrors({ general: data.message });
       }
-    }, 1000);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError<{ message: string }>;
+        setErrors({ general: axiosError.response?.data.message });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (

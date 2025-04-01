@@ -8,10 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { z } from 'zod';
 import FacebookSocialButton from '../common/social/FacebookSocialButton';
 import GoogleSocialButton from '../common/social/GoogleSocialButton';
@@ -23,7 +23,7 @@ const signInSchema = z.object({
   password: passwordSignInValidation,
 });
 
-type SignInFormValues = z.infer<typeof signInSchema>;
+const COOKIE_SETUP_DELAY = 800;
 
 export function SignInForm() {
   const router = useRouter();
@@ -49,41 +49,23 @@ export function SignInForm() {
     setIsLoading(true);
     setErrors({});
     try {
-      const validationResult = signInSchema.safeParse(values);
-
-      if (!validationResult.success) {
-        const formattedErrors = {
-          email: '',
-          password: '',
-        };
-
-        validationResult.error.errors.forEach((error) => {
-          const path = error.path[0] as keyof SignInFormValues;
-          formattedErrors[path] = error.message;
-        });
-
-        setErrors(formattedErrors);
-        setIsLoading(false);
-        return;
-      }
-
       const data = await signIn.mutateAsync({
         email: values.email,
         password: values.password,
       });
 
       if (data.status === 'success') {
-        toast('Signed in successfully!');
-        setIsLoading(false);
-        setTimeout(() => {
-          router.push('/');
-        }, 1000);
+        await new Promise((resolve) => setTimeout(resolve, COOKIE_SETUP_DELAY));
+        router.replace('/');
       } else {
         setErrors({ general: data.message });
+        setIsLoading(false);
       }
     } catch (error) {
-      console.log(error);
-      setErrors({ general: 'Something went wrong' });
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError<{ message: string }>;
+        setErrors({ general: axiosError.response?.data.message });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +139,7 @@ export function SignInForm() {
         )}
 
         <Button type='submit' className='w-full cursor-pointer rounded-md py-2.5 text-white'>
-          {isLoading ? <LoadingSpinner /> : 'Sign up'}
+          {isLoading ? <LoadingSpinner /> : 'Sign in'}
         </Button>
 
         <div className='relative'>
