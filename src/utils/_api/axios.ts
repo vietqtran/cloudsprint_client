@@ -61,7 +61,13 @@ instance.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const { data } = await instance.post('/auth/refresh', {}, { withCredentials: true });
+      const { data } = await instance.post(
+        '/auth/refresh',
+        {
+          sessionId: localStorage.getItem('session_id'),
+        },
+        { withCredentials: true }
+      );
 
       if (data.status === 'success') {
         processQueue(null);

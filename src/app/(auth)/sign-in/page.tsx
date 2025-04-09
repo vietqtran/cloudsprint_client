@@ -11,7 +11,7 @@ export default function SignInPage() {
         <p className='mt-3 text-[#8897ad]'>
           Today is a new day. It&apos;s your day. You shape it.
           <br />
-          Sign in to start managing your projects.
+          Sign in to start deploying your projects.
         </p>
 
         <SignInForm />

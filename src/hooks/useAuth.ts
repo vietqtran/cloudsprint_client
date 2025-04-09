@@ -49,8 +49,19 @@ export function useAuth() {
       await new Promise((resolve) => setTimeout(resolve, 300));
       return data;
     },
-    onSuccess: async () => {
-      await refetchUser();
+  });
+
+  const sendOtp = useMutation({
+    mutationFn: async (email: string) => {
+      const { data } = await instance.post('/auth/verify-email/send-otp', { email });
+      return data;
+    },
+  });
+
+  const verifyOtp = useMutation({
+    mutationFn: async (data: { email: string; otp: string }) => {
+      const { data: response } = await instance.post('/auth/verify-email/verify', data);
+      return response;
     },
   });
 
@@ -64,6 +75,8 @@ export function useAuth() {
     userError,
     signIn,
     signUp,
+    sendOtp,
+    verifyOtp,
     refetchUser,
   };
 }

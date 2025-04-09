@@ -11,6 +11,8 @@ type Props = {
   isAuthPage?: boolean;
 };
 
+const authPages = ['/sign-in', '/sign-up', '/otp/success', '/otp/verify', '/forgot', '/reset'];
+
 const AuthProvider = ({ children, isAuthPage = false }: Props) => {
   const router = useRouter();
   const pathName = usePathname();
@@ -18,13 +20,11 @@ const AuthProvider = ({ children, isAuthPage = false }: Props) => {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const isAuthRelatedPage = pathName === '/sign-in' || pathName === '/sign-up';
+    const isAuthRelatedPage = authPages.includes(pathName);
 
     const checkAuth = async () => {
       try {
-        if (!isAuthRelatedPage) {
-          await refetchUser();
-        }
+        await refetchUser();
       } catch (error) {
         console.error('Error checking authentication:', error);
       } finally {

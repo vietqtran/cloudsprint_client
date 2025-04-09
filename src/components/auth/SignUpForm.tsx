@@ -28,7 +28,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import FacebookSocialButton from '../common/social/FacebookSocialButton';
+import GithubSocialButton from '../common/social/GithubSocialButton';
 import GoogleSocialButton from '../common/social/GoogleSocialButton';
 import LoadingSpinner from '../ui/loading-spinner';
 
@@ -256,7 +256,7 @@ export function SignUpForm() {
 
         <div className='space-y-3'>
           <GoogleSocialButton />
-          <FacebookSocialButton />
+          <GithubSocialButton />
         </div>
       </form>
     </Form>

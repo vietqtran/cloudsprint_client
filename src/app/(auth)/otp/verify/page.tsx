@@ -1,13 +1,25 @@
 'use client';
 
-import type React from 'react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 import { otpValidation } from '@/constants/validate';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useAuth } from '@/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -15,12 +27,11 @@ const otpVerificationSchema = z.object({
   otp: otpValidation,
 });
 
-type OtpVerificationFormValues = z.infer<typeof otpVerificationSchema>;
-
 export default function OtpVerificationForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
+  const { sendOtp, verifyOtp } = useAuth();
 
   const [errors, setErrors] = useState<{
     otp?: string;
@@ -29,6 +40,47 @@ export default function OtpVerificationForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [resendDisabled, setResendDisabled] = useState(true);
+
+  const form = useForm<z.infer<typeof otpVerificationSchema>>({
+    resolver: zodResolver(otpVerificationSchema),
+    defaultValues: {
+      otp: '',
+    },
+  });
+
+  const handleSendOtp = async () => {
+    try {
+      await sendOtp.mutateAsync(email);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError<{
+          message: string;
+        }>;
+        toast.error(axiosError.response?.data.message);
+        return;
+      }
+      toast.error('An unexpected error occurred. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    const unVerifyEmail = localStorage.getItem('unverify_email');
+    const isFirstSendOtp = localStorage.getItem('is_first_send_otp');
+    if (!unVerifyEmail) {
+      router.replace('/sign-in');
+      return;
+    } else {
+      if (isFirstSendOtp) {
+        handleSendOtp();
+        localStorage.removeItem('is_first_send_otp');
+      }
+    }
+
+    return () => {
+      localStorage.removeItem('unverify_email');
+      localStorage.removeItem('is_first_send_otp');
+    };
+  }, []);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -43,55 +95,42 @@ export default function OtpVerificationForm() {
     return () => clearTimeout(timer);
   }, [timeLeft]);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(values: z.infer<typeof otpVerificationSchema>) {
+    if (isLoading) return;
     setIsLoading(true);
     setErrors({});
 
-    const formData = new FormData(event.currentTarget);
-    const otp = formData.get('otp') as string;
-
-    const validationResult = otpVerificationSchema.safeParse({ otp });
-
-    if (!validationResult.success) {
-      const formattedErrors = {
-        otp: '',
-      };
-
-      validationResult.error.errors.forEach((error) => {
-        const path = error.path[0] as keyof OtpVerificationFormValues;
-        formattedErrors[path] = error.message;
-      });
-
-      setErrors(formattedErrors);
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      setTimeout(() => {
-        toast('Verification successful!');
-
-        router.push(`/reset?email=${encodeURIComponent(email)}&token=${otp}`);
-        setIsLoading(false);
-      }, 1000);
+      const verifyResponse = await verifyOtp.mutateAsync({
+        email: email,
+        otp: values.otp,
+      });
+      if (verifyResponse.status === 'success') {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        router.replace('/');
+      }
     } catch (error) {
-      console.error(error);
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError<{
+          message: string;
+          error_code: string;
+        }>;
+        setErrors({ general: axiosError.response?.data.message });
+        return;
+      }
       setErrors({
         general: 'Invalid verification code. Please try again.',
       });
+    } finally {
       setIsLoading(false);
     }
   }
 
-  function handleResendOTP() {
+  const handleResendOTP = async () => {
     setResendDisabled(true);
     setTimeLeft(60);
-
-    setTimeout(() => {
-      toast('Verification code resent!');
-    }, 1000);
-  }
+    await handleSendOtp();
+  };
 
   return (
     <div className='mx-auto max-w-md space-y-6 px-4 py-8'>
@@ -102,54 +141,62 @@ export default function OtpVerificationForm() {
           <span className='font-medium text-[#313957]'>{email}</span>
         </p>
       </div>
-
-      <form className='space-y-6' onSubmit={handleSubmit}>
-        <div className='space-y-2'>
-          <Label htmlFor='otp' className='block text-sm font-medium text-[#313957]'>
-            Verification Code
-          </Label>
-          <Input
-            autoFocus
-            id='otp'
-            name='otp'
-            type='text'
-            maxLength={6}
-            placeholder='Enter 6-digit code'
-            className={`w-full rounded-md border text-center tracking-widest ${
-              errors.otp ? 'border-red-500' : 'border-[#d4d7e3]'
-            } bg-[#f7fbff] px-3 py-2 text-[#313957] text-lg`}
-          />
-          {errors.otp && <p className='mt-1 text-xs text-red-500'>{errors.otp}</p>}
-        </div>
-
-        {errors.general && (
-          <div className='rounded-md bg-red-50 p-3'>
-            <p className='text-sm text-red-500'>{errors.general}</p>
+      <Form {...form}>
+        <form className='space-y-6' onSubmit={form.handleSubmit(handleSubmit)}>
+          <div className='space-y-2'>
+            <FormField
+              control={form.control}
+              name='otp'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <Label htmlFor='otp' className='block text-sm font-medium'>
+                      Verification code
+                    </Label>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      autoFocus
+                      id='otp'
+                      type='text'
+                      maxLength={6}
+                      placeholder='Enter 6-digit code'
+                      className={`w-full rounded-md border px-3 py-2 text-center tracking-widest`}
+                      isError={!!form.formState.errors.otp}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-        )}
 
-        <Button
-          type='submit'
-          disabled={isLoading}
-          className='w-full cursor-pointer rounded-md bg-[#162d3a] py-2.5 text-white hover:bg-[#122b31] focus:outline-none focus:ring-2 focus:ring-[#294957] focus:ring-offset-2'
-        >
-          {isLoading ? 'Verifying...' : 'Verify Code'}
-        </Button>
+          {errors.general && (
+            <div className='rounded-md bg-red-50 p-3'>
+              <p className='text-sm text-red-500'>{errors.general}</p>
+            </div>
+          )}
 
-        <div className='text-center space-y-2'>
-          <p className='text-sm text-[#8897ad]'>Didn&apos;t receive the code?</p>
-          <button
-            type='button'
-            disabled={resendDisabled}
-            className={`text-sm cursor-pointer ${
-              resendDisabled ? 'text-[#8897ad]' : 'text-[#1e4ae9] hover:underline'
-            }`}
-            onClick={handleResendOTP}
-          >
-            {resendDisabled ? `Resend code in ${timeLeft}s` : 'Resend code'}
-          </button>
-        </div>
-      </form>
+          <Button type='submit' className='w-full cursor-pointer rounded-md py-2.5 text-white'>
+            {isLoading ? <LoadingSpinner /> : 'Verify'}
+          </Button>
+
+          <div className='text-center space-y-2'>
+            <p className='text-sm text-[#8897ad]'>Didn&apos;t receive the code?</p>
+            <button
+              type='button'
+              disabled={resendDisabled}
+              className={`text-sm cursor-pointer ${
+                resendDisabled ? 'text-[#8897ad]' : 'text-[#1e4ae9] hover:underline'
+              }`}
+              onClick={handleResendOTP}
+            >
+              {resendDisabled ? `Resend code in ${timeLeft}s` : 'Resend code'}
+            </button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

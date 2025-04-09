@@ -9,18 +9,18 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Your Site Name',
-    template: '%s | Your Site Name',
+    default: 'Cloud Sprint',
+    template: '%s | Cloud Sprint',
   },
   description: 'Your site description goes here',
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://www.yourdomain.com',
-    siteName: 'Your Site Name',
+    url: 'https://cloudsprint.com',
+    siteName: 'Cloud Sprint',
     images: [
       {
-        url: 'https://www.yourdomain.com/og-image.jpg',
+        url: 'https://cloudsprint/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Og Image Alt',
