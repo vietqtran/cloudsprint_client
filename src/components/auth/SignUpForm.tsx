@@ -223,7 +223,7 @@ export function SignUpForm() {
                 <FormControl>
                   <Input
                     id='confirmPassword'
-                    type='confirmPassword'
+                    type='password'
                     placeholder='••••••••'
                     className={`w-full rounded-md border px-3 py-2`}
                     isError={!!form.formState.errors.confirmPassword}
