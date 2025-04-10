@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-const GoogleSocialButton = () => {
+interface GoogleSocialButtonProps {
+  text?: string;
+}
+
+const GoogleSocialButton = ({text}: GoogleSocialButtonProps) => {
   return (
     <Button
       type='button'
@@ -28,7 +32,7 @@ const GoogleSocialButton = () => {
           fill='#EA4335'
         />
       </svg>
-      Sign up with Google
+      {text ?? 'Continue with Google'}
     </Button>
   );
 };

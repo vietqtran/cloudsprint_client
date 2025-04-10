@@ -1,7 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-const GithubSocialButton = () => {
+interface GithubSocialButtonProps { 
+  text?: string;
+}
+
+const GithubSocialButton = ({text}: GithubSocialButtonProps) => {
   return (
     <Button
       type='button'
@@ -18,7 +22,7 @@ const GithubSocialButton = () => {
           clipRule='evenodd'
         />
       </svg>
-      Sign up with Facebook
+      {text ?? 'Continue with Github'}
     </Button>
   );
 };

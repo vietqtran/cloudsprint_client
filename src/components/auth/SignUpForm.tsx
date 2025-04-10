@@ -1,13 +1,6 @@
 'use client';
 
 import {
-  confirmPasswordValidation,
-  emailValidation,
-  firstNameValidation,
-  lastNameValidation,
-  passwordValidation,
-} from '@/constants/validate';
-import {
   Form,
   FormControl,
   FormDescription,
@@ -16,21 +9,28 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
+import {
+  confirmPasswordValidation,
+  emailValidation,
+  firstNameValidation,
+  lastNameValidation,
+  passwordValidation,
+} from '@/constants/validate';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import GithubSocialButton from '../common/social/GithubSocialButton';
 import GoogleSocialButton from '../common/social/GoogleSocialButton';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import LoadingSpinner from '../ui/loading-spinner';
+import { toast } from 'sonner';
+import { useAuth } from '@/hooks';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const signUpSchema = z
   .object({
@@ -81,8 +81,9 @@ export function SignUpForm() {
       });
 
       if (data.status === 'success') {
-        toast.success(data.message);
-        router.push('/sign-in');
+        localStorage.setItem('unverify_email', values.email);
+        localStorage.setItem('is_first_send_otp', 'true');
+        router.push('/otp/verify' + `?email=${values.email}`);
       } else {
         setErrors({ general: data.message });
       }
@@ -255,8 +256,8 @@ export function SignUpForm() {
         </div>
 
         <div className='space-y-3'>
-          <GoogleSocialButton />
-          <GithubSocialButton />
+          <GoogleSocialButton text='Sign up with Google' />
+          <GithubSocialButton text='Sign in with Github' />
         </div>
       </form>
     </Form>

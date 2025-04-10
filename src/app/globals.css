@@ -1,9 +1,7 @@
 @import "tailwindcss";
-/*
----break--- */
+@import "./fonts.css";
 @plugin "tailwindcss-animate";
-/*
----break--- */
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -45,8 +43,6 @@
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
-  /*
----break--- */
   @keyframes accordion-down {
     from {
       height: 0;
@@ -57,8 +53,6 @@
     }
   }
 
-  /*
----break--- */
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
@@ -77,10 +71,6 @@
     --foreground: #ededed;
   }
 } */
-
-/*
----break--- 
-*/
 
 :root {
   --radius: 0.625rem;
@@ -117,9 +107,6 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/*
----break--- */
-
 /* .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -154,8 +141,11 @@
   --sidebar-ring: oklch(0.556 0 0);
 } */
 
-/*
----break--- */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 
 @layer base {
   * {

@@ -3,9 +3,9 @@ import 'ldrs/react/Ring.css';
 
 import React, { Suspense } from 'react';
 
-import { Toaster } from '@/components/ui/sonner';
-import { TanstackQueryProviders } from '@/providers';
 import type { Metadata } from 'next';
+import { TanstackQueryProviders } from '@/providers';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className='antialiased'>
+      <body className="antialiased bg-background text-foreground font-ember-display-regular">
         <Suspense fallback={null}>
           <TanstackQueryProviders>
             {children}

@@ -1,23 +1,23 @@
 'use client';
 
-import { emailValidation, passwordSignInValidation } from '@/constants/validate';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { emailValidation, passwordSignInValidation } from '@/constants/validate';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ERROR_CODE } from '@/constants/error_code';
-import { useAuth } from '@/hooks';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import CustomLink from '../ui/link';
+import { ERROR_CODE } from '@/constants/error_code';
 import GithubSocialButton from '../common/social/GithubSocialButton';
 import GoogleSocialButton from '../common/social/GoogleSocialButton';
-import CustomLink from '../ui/link';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import LoadingSpinner from '../ui/loading-spinner';
+import { useAuth } from '@/hooks';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const signInSchema = z.object({
   email: emailValidation,
@@ -54,8 +54,8 @@ export function SignInForm() {
         email: values.email,
         password: values.password,
       });
-      localStorage.setItem('session_id', data.data.session_id);
       if (data.status === 'success') {
+        localStorage.setItem('session_id', data.data.session_id);
         await new Promise((resolve) => setTimeout(resolve, COOKIE_SETUP_DELAY));
         router.replace('/');
       } else {
@@ -159,8 +159,8 @@ export function SignInForm() {
         </div>
 
         <div className='space-y-3'>
-          <GoogleSocialButton />
-          <GithubSocialButton />
+          <GoogleSocialButton text='Sign in with Google' />
+          <GithubSocialButton text='Sign in with Github' />
         </div>
       </form>
     </Form>
