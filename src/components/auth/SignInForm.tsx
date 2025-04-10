@@ -55,7 +55,6 @@ export function SignInForm() {
         password: values.password,
       });
       if (data.status === 'success') {
-        localStorage.setItem('session_id', data.data.session_id);
         await new Promise((resolve) => setTimeout(resolve, COOKIE_SETUP_DELAY));
         router.replace('/');
       } else {

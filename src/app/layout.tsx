@@ -4,6 +4,7 @@ import 'ldrs/react/Ring.css';
 import React, { Suspense } from 'react';
 
 import type { Metadata } from 'next';
+import StoreProvider from '@/providers/StoreProvider';
 import { TanstackQueryProviders } from '@/providers';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -43,10 +44,12 @@ export default function RootLayout({
     <html lang='en'>
       <body className="antialiased bg-background text-foreground font-ember-display-regular">
         <Suspense fallback={null}>
+          <StoreProvider>
           <TanstackQueryProviders>
             {children}
             <Toaster />
           </TanstackQueryProviders>
+          </StoreProvider>
         </Suspense>
       </body>
     </html>

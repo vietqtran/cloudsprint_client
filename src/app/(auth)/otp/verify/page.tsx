@@ -106,7 +106,6 @@ export default function OtpVerificationForm() {
         otp: values.otp,
       });
       if (verifyResponse.status === 'success') {
-        localStorage.setItem('session_id', verifyResponse.data.session_id);
         await new Promise((resolve) => setTimeout(resolve, 800));
         router.replace('/');
       }

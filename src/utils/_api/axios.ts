@@ -1,20 +1,38 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 
-import axios from 'axios';
+declare module "axios" {
+  interface AxiosRequestConfig {
+    _skipAuthRefresh?: boolean;
+    _retry?: boolean;
+  }
+}
 
-const instance = axios.create({
+interface QueueItem {
+  resolve: (value: unknown) => void;
+  reject: (reason?: any) => void;
+}
+
+const instance: AxiosInstance = axios.create({
   timeout: 300000,
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
 
 let isRefreshing = false;
-let failedQueue: { resolve: (value: unknown) => void; reject: (reason?: any) => void }[] = [];
+let failedQueue: QueueItem[] = [];
+const authPages = [
+  "/sign-in",
+  "/sign-up",
+  "/otp/success",
+  "/otp/verify",
+  "/forgot",
+  "/reset",
+];
 
-const processQueue = (error: any, token = null) => {
+const processQueue = (error: any | null, token: unknown = null): void => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -25,23 +43,42 @@ const processQueue = (error: any, token = null) => {
   failedQueue = [];
 };
 
+const isAuthPage = (): boolean => {
+  return authPages.some(
+    (path) =>
+      window.location.pathname === path ||
+      window.location.pathname.startsWith(path + "/")
+  );
+};
+
+const redirectToSignIn = (): void => {
+  if (!isAuthPage()) {
+    window.location.replace("/sign-in");
+  }
+};
+
 instance.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     return response;
   },
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (!error.response || error.response.status !== 401) {
+  async (error: AxiosError) => {
+    if (!error.config || !error.response) {
       return Promise.reject(error);
     }
 
-    if (window.location.pathname === '/sign-in' || window.location.pathname === '/sign-up') {
+    const originalRequest = error.config;
+
+    if (originalRequest._skipAuthRefresh || error.response.status !== 401) {
+      return Promise.reject(error);
+    }
+
+    if (isAuthPage()) {
       return Promise.reject(error);
     }
 
     if (originalRequest._retry) {
-      window.location.href = '/sign-in';
+      localStorage.removeItem("persist:root")
+      redirectToSignIn();
       return Promise.reject(error);
     }
 
@@ -61,34 +98,37 @@ instance.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const { data } = await instance.post(
-        '/auth/refresh',
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
         {
-          sessionId: localStorage.getItem('session_id'),
+          sessionId: localStorage.getItem("session_id"),
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          _skipAuthRefresh: true,
+        }
       );
 
-      if (data.status === 'success') {
+      if (data && data.status === "success") {
         processQueue(null);
         isRefreshing = false;
         return instance(originalRequest);
       } else {
-        processQueue(new Error('Refresh token failed'));
+        processQueue(new Error("Refresh token failed"));
         isRefreshing = false;
-
-        if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
-          window.location.href = '/sign-in';
-        }
+        localStorage.removeItem("persist:root")
+        redirectToSignIn();
         return Promise.reject(error);
       }
     } catch (refreshError) {
       processQueue(refreshError);
       isRefreshing = false;
 
-      if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up') {
-        window.location.href = '/sign-in';
+      if (process.env.NODE_ENV === "development") {
+        console.error("[Auth] Refresh token failed:", refreshError);
       }
+      localStorage.removeItem("persist:root")
+      redirectToSignIn();
       return Promise.reject(refreshError);
     }
   }
@@ -96,7 +136,7 @@ instance.interceptors.response.use(
 
 instance.interceptors.request.use(
   (config) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.log(`[Request] ${config.method?.toUpperCase()} ${config.url}`);
     }
     return config;
