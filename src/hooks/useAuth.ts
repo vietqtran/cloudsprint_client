@@ -91,6 +91,32 @@ export function useAuth() {
     }
   });
 
+  const googleAuth = useCallback(() => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google/auth`;
+  }, []);
+
+  const handleAuthCallback = useCallback(async (params: URLSearchParams) => {
+    const accessToken = params.get('access_token');
+    const sessionId = params.get('session_id');
+    
+    if (accessToken && sessionId) {
+      try {
+        const { data } = await instance.get("/auth/me", {
+          withCredentials: true,
+        });
+        
+        if (data.status === "success") {
+          dispatch(setUser(data.data));
+          localStorage.setItem("session_id", sessionId);
+          return true;
+        }
+      } catch (error) {
+        console.error("Failed to fetch user after OAuth:", error);
+      }
+    }
+    return false;
+  }, [dispatch]);
+
   return {
     signIn,
     signUp,
@@ -98,5 +124,7 @@ export function useAuth() {
     sendOtp,
     verifyOtp,
     refetchUser,
+    googleAuth,
+    handleAuthCallback,
   };
 }

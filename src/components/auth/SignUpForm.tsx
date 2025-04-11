@@ -24,7 +24,6 @@ import GoogleSocialButton from '../common/social/GoogleSocialButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import LoadingSpinner from '../ui/loading-spinner';
-import { toast } from 'sonner';
 import { useAuth } from '@/hooks';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';

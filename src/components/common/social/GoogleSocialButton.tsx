@@ -1,18 +1,18 @@
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { useAuth } from '@/hooks';
 
 interface GoogleSocialButtonProps {
   text?: string;
 }
 
 const GoogleSocialButton = ({text}: GoogleSocialButtonProps) => {
+  const { googleAuth } = useAuth();
+  
   return (
     <Button
       type='button'
       className='flex w-full cursor-pointer items-center justify-center gap-3 rounded-md px-4 py-2 text-sm font-medium'
-      onClick={() => {
-        toast('Google sign-up would be triggered here.');
-      }}
+      onClick={googleAuth}
     >
       <svg width='20' height='20' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
         <path
