@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-interface GithubSocialButtonProps { 
+interface GithubSocialButtonProps {
   text?: string;
 }
 
-const GithubSocialButton = ({text}: GithubSocialButtonProps) => {
+const GithubSocialButton = ({ text }: GithubSocialButtonProps) => {
   return (
     <Button
       type='button'

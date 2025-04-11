@@ -3,10 +3,10 @@ import 'ldrs/react/Ring.css';
 
 import React, { Suspense } from 'react';
 
-import type { Metadata } from 'next';
-import StoreProvider from '@/providers/StoreProvider';
-import { TanstackQueryProviders } from '@/providers';
 import { Toaster } from '@/components/ui/sonner';
+import { TanstackQueryProviders } from '@/providers';
+import StoreProvider from '@/providers/StoreProvider';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
@@ -42,13 +42,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className="antialiased bg-background text-foreground font-ember-display-regular">
+      <body className='antialiased bg-background text-foreground font-ember-display-regular'>
         <Suspense fallback={null}>
           <StoreProvider>
-          <TanstackQueryProviders>
-            {children}
-            <Toaster />
-          </TanstackQueryProviders>
+            <TanstackQueryProviders>
+              {children}
+              <Toaster theme='light' richColors />
+            </TanstackQueryProviders>
           </StoreProvider>
         </Suspense>
       </body>

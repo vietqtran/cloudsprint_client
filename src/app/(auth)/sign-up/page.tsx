@@ -1,5 +1,5 @@
-import CustomLink from '@/components/ui/link';
 import { SignUpForm } from '@/components/auth/SignUpForm';
+import CustomLink from '@/components/ui/link';
 
 export default function SignUpPage() {
   return (
@@ -20,7 +20,9 @@ export default function SignUpPage() {
           Already have an account? <CustomLink href='/sign-in' text='Sign in' />
         </p>
 
-        <p className='mt-10 text-center text-xs text-muted-foreground'>© 2025 ALL RIGHTS RESERVED</p>
+        <p className='mt-10 text-center text-xs text-muted-foreground'>
+          © 2025 ALL RIGHTS RESERVED
+        </p>
       </div>
     </div>
   );

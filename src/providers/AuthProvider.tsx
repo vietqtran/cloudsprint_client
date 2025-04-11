@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useAppSelector, useAuth } from '@/hooks';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 import LoadingSpinner from '@/components/ui/loading-spinner';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   children: React.ReactNode;
@@ -12,13 +12,13 @@ type Props = {
 };
 
 const AuthProvider = ({ children, isAuthPage = false }: Props) => {
-  const {refetchUser} = useAuth();
-  const {user} = useAppSelector((state) => state.auth);
-  const {replace} = useRouter()
+  const { refetchUser } = useAuth();
+  const { user } = useAppSelector((state) => state.auth);
+  const { replace } = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => { 
-    const checkAuth = async () => { 
+  useEffect(() => {
+    const checkAuth = async () => {
       if (isAuthPage) {
         if (user) {
           replace('/');
@@ -33,10 +33,10 @@ const AuthProvider = ({ children, isAuthPage = false }: Props) => {
           replace('/sign-in');
         }
       }
-    }
+    };
 
-    checkAuth()
-  }, [])
+    checkAuth();
+  }, []);
 
   if (isLoading) {
     return (
@@ -45,8 +45,8 @@ const AuthProvider = ({ children, isAuthPage = false }: Props) => {
       </div>
     );
   } else {
-    return <>{children}</>;
-  };
-}
+    return children;
+  }
+};
 
 export default AuthProvider;

@@ -1,23 +1,23 @@
 'use client';
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { emailValidation, passwordSignInValidation } from '@/constants/validate';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 
-import { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
-import CustomLink from '../ui/link';
-import { ERROR_CODE } from '@/constants/error_code';
-import GithubSocialButton from '../common/social/GithubSocialButton';
-import GoogleSocialButton from '../common/social/GoogleSocialButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import LoadingSpinner from '../ui/loading-spinner';
+import { ERROR_CODE } from '@/constants/error_code';
 import { useAuth } from '@/hooks';
-import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import GithubSocialButton from '../common/social/GithubSocialButton';
+import GoogleSocialButton from '../common/social/GoogleSocialButton';
+import CustomLink from '../ui/link';
+import LoadingSpinner from '../ui/loading-spinner';
 
 const signInSchema = z.object({
   email: emailValidation,
@@ -158,8 +158,8 @@ export function SignInForm() {
         </div>
 
         <div className='space-y-3'>
-          <GoogleSocialButton text='Sign in with Google' />
-          <GithubSocialButton text='Sign in with Github' />
+          <GoogleSocialButton />
+          <GithubSocialButton />
         </div>
       </form>
     </Form>

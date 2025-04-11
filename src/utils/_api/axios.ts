@@ -1,6 +1,6 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 
-declare module "axios" {
+declare module 'axios' {
   interface AxiosRequestConfig {
     _skipAuthRefresh?: boolean;
     _retry?: boolean;
@@ -16,21 +16,14 @@ const instance: AxiosInstance = axios.create({
   timeout: 300000,
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
   withCredentials: true,
 });
 
 let isRefreshing = false;
 let failedQueue: QueueItem[] = [];
-const authPages = [
-  "/sign-in",
-  "/sign-up",
-  "/otp/success",
-  "/otp/verify",
-  "/forgot",
-  "/reset",
-];
+const authPages = ['/sign-in', '/sign-up', '/otp/verify', '/forgot', '/reset'];
 
 const processQueue = (error: any | null, token: unknown = null): void => {
   failedQueue.forEach((prom) => {
@@ -45,15 +38,13 @@ const processQueue = (error: any | null, token: unknown = null): void => {
 
 const isAuthPage = (): boolean => {
   return authPages.some(
-    (path) =>
-      window.location.pathname === path ||
-      window.location.pathname.startsWith(path + "/")
+    (path) => window.location.pathname === path || window.location.pathname.startsWith(path + '/')
   );
 };
 
 const redirectToSignIn = (): void => {
   if (!isAuthPage()) {
-    window.location.replace("/sign-in");
+    window.location.replace('/sign-in');
   }
 };
 
@@ -77,7 +68,7 @@ instance.interceptors.response.use(
     }
 
     if (originalRequest._retry) {
-      localStorage.removeItem("persist:root")
+      localStorage.removeItem('persist:root');
       redirectToSignIn();
       return Promise.reject(error);
     }
@@ -101,7 +92,7 @@ instance.interceptors.response.use(
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
         {
-          sessionId: localStorage.getItem("session_id"),
+          sessionId: localStorage.getItem('session_id'),
         },
         {
           withCredentials: true,
@@ -109,14 +100,14 @@ instance.interceptors.response.use(
         }
       );
 
-      if (data && data.status === "success") {
+      if (data && data.status === 'success') {
         processQueue(null);
         isRefreshing = false;
         return instance(originalRequest);
       } else {
-        processQueue(new Error("Refresh token failed"));
+        processQueue(new Error('Refresh token failed'));
         isRefreshing = false;
-        localStorage.removeItem("persist:root")
+        localStorage.removeItem('persist:root');
         redirectToSignIn();
         return Promise.reject(error);
       }
@@ -124,10 +115,10 @@ instance.interceptors.response.use(
       processQueue(refreshError);
       isRefreshing = false;
 
-      if (process.env.NODE_ENV === "development") {
-        console.error("[Auth] Refresh token failed:", refreshError);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[Auth] Refresh token failed:', refreshError);
       }
-      localStorage.removeItem("persist:root")
+      localStorage.removeItem('persist:root');
       redirectToSignIn();
       return Promise.reject(refreshError);
     }
@@ -136,7 +127,7 @@ instance.interceptors.response.use(
 
 instance.interceptors.request.use(
   (config) => {
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       console.log(`[Request] ${config.method?.toUpperCase()} ${config.url}`);
     }
     return config;

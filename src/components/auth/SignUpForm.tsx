@@ -1,6 +1,13 @@
 'use client';
 
 import {
+  confirmPasswordValidation,
+  emailValidation,
+  firstNameValidation,
+  lastNameValidation,
+  passwordValidation,
+} from '@/constants/validate';
+import {
   Form,
   FormControl,
   FormDescription,
@@ -9,27 +16,20 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
-import {
-  confirmPasswordValidation,
-  emailValidation,
-  firstNameValidation,
-  lastNameValidation,
-  passwordValidation,
-} from '@/constants/validate';
 
-import { AxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
-import GithubSocialButton from '../common/social/GithubSocialButton';
-import GoogleSocialButton from '../common/social/GoogleSocialButton';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import LoadingSpinner from '../ui/loading-spinner';
 import { useAuth } from '@/hooks';
-import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
+import GithubSocialButton from '../common/social/GithubSocialButton';
+import GoogleSocialButton from '../common/social/GoogleSocialButton';
+import LoadingSpinner from '../ui/loading-spinner';
 
 const signUpSchema = z
   .object({
@@ -255,8 +255,8 @@ export function SignUpForm() {
         </div>
 
         <div className='space-y-3'>
-          <GoogleSocialButton text='Sign up with Google' />
-          <GithubSocialButton text='Sign in with Github' />
+          <GoogleSocialButton />
+          <GithubSocialButton />
         </div>
       </form>
     </Form>

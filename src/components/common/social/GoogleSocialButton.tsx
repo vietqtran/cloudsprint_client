@@ -5,9 +5,9 @@ interface GoogleSocialButtonProps {
   text?: string;
 }
 
-const GoogleSocialButton = ({text}: GoogleSocialButtonProps) => {
+const GoogleSocialButton = ({ text }: GoogleSocialButtonProps) => {
   const { googleAuth } = useAuth();
-  
+
   return (
     <Button
       type='button'
