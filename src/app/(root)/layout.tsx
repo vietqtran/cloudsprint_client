@@ -1,5 +1,5 @@
-import { Header } from '@/components/common/layout/Header';
-import { AppSidebar } from '@/components/common/layout/Sidebar';
+import { Header } from '@/components/layout/Header';
+import { AppSidebar } from '@/components/layout/Sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AuthProvider from '@/providers/AuthProvider';
 import React from 'react';

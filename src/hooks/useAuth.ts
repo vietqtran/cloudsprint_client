@@ -2,8 +2,8 @@
 
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import instance from '@/lib/axios';
 import { setUser } from '@/store/slices/auth-slice';
-import instance from '@/utils/_api/axios';
 import { useCallback } from 'react';
 import { useAppDispatch } from './useStore';
 
