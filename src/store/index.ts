@@ -12,7 +12,7 @@ import {
 
 import { RootState } from '@/types';
 import storage from 'redux-persist/lib/storage';
-import { authReducer } from './slices';
+import { authReducer, commonReducer } from './slices';
 
 const persistConfig = {
   key: 'root',
@@ -23,6 +23,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  common: commonReducer,
 });
 
 const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);

@@ -3,6 +3,7 @@ import 'ldrs/react/Ring.css';
 
 import React, { Suspense } from 'react';
 
+import FullPageLoading from '@/components/layout/FullPageLoading';
 import { Toaster } from '@/components/ui/sonner';
 import { TanstackQueryProviders } from '@/providers';
 import StoreProvider from '@/providers/StoreProvider';
@@ -42,15 +43,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className='antialiased bg-background text-foreground font-ember-display-regular'>
-        <Suspense fallback={null}>
-          <StoreProvider>
+      <body className='antialiased bg-background text-foreground relative'>
+        <StoreProvider>
+          <Suspense fallback={null}>
             <TanstackQueryProviders>
               {children}
+              <FullPageLoading />
               <Toaster theme='light' richColors />
             </TanstackQueryProviders>
-          </StoreProvider>
-        </Suspense>
+          </Suspense>
+        </StoreProvider>
       </body>
     </html>
   );

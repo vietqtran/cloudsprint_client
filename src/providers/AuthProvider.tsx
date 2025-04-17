@@ -1,10 +1,9 @@
 'use client';
 
-import { useAppSelector, useAuth } from '@/hooks';
-import React, { useEffect, useState } from 'react';
-
-import LoadingSpinner from '@/components/ui/loading-spinner';
+import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
+import { setFullPageLoading } from '@/store/slices/common-slice';
 import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 type Props = {
   children: React.ReactNode;
@@ -15,38 +14,31 @@ const AuthProvider = ({ children, isAuthPage = false }: Props) => {
   const { refetchUser } = useAuth();
   const { user } = useAppSelector((state) => state.auth);
   const { replace } = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
+    dispatch(setFullPageLoading(true));
     const checkAuth = async () => {
       if (isAuthPage) {
         if (user) {
           replace('/');
-        } else {
-          setIsLoading(false);
         }
       } else {
         await refetchUser();
-        if (user) {
-          setIsLoading(false);
-        } else {
+        if (!user) {
           replace('/sign-in');
         }
       }
+
+      setTimeout(() => {
+        dispatch(setFullPageLoading(false));
+      }, 2000);
     };
 
     checkAuth();
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className='w-screen h-screen flex justify-center items-center'>
-        <LoadingSpinner color='black' />
-      </div>
-    );
-  } else {
-    return children;
-  }
+  return children;
 };
 
 export default AuthProvider;

@@ -6,15 +6,15 @@ import React from 'react';
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <AuthProvider>
+    <AuthProvider>
+      <SidebarProvider>
+        <AppSidebar />
         <div className='size-full'>
           <Header />
           {children}
         </div>
-      </AuthProvider>
-    </SidebarProvider>
+      </SidebarProvider>
+    </AuthProvider>
   );
 };
 
