@@ -15,7 +15,7 @@ instance.interceptors.request.use((config) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`[Request] ${config.method?.toUpperCase()} ${config.url}`);
   }
-  config.headers.idempotency_key = generateRandomUUID();
+  config.headers['idempotency-key'] = generateRandomUUID();
   return config;
 });
 
